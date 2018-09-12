@@ -1,7 +1,3 @@
-/*!
- * LedInput: Core, ES5
- * Built with http://stenciljs.com
- */
 this && this.__extends || function() {
   var extendStatics = Object.setPrototypeOf || {
     __proto__: []
@@ -14,7 +10,7 @@ this && this.__extends || function() {
 
 var appGlobal = function() {};
 
-function applyPolyfills(window, cb) {
+export function applyPolyfills(window, cb) {
   /*!
     es6-promise - a tiny implementation of Promises/A+.
     Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
@@ -2441,7 +2437,7 @@ function defineCustomElement(win, cmpData, opts) {
   void 0 === opts && (opts = {});
   cmpData = Array.isArray(cmpData) ? cmpData : [ cmpData ];
   var doc = win.document;
-  var hydratedCssClass = opts.hydratedCssClass || 'hydrated';
+  var hydratedCssClass = opts.hydratedCssClass || '__APP__HYDRATED__CSS__PLACEHOLDER__';
   var styleCmps = cmpData.filter(function(c) {
     return c[2];
   }).map(function(c) {
@@ -2455,7 +2451,7 @@ function defineCustomElement(win, cmpData, opts) {
     styleElm.setAttribute('data-styles', '');
     doc.head.insertBefore(styleElm, doc.head.firstChild);
   }
-  var namespace = opts.namespace || 'LedInput';
+  var namespace = opts.namespace || '__APP__NAMESPACE__PLACEHOLDER__';
   if (!initCmpOnReady) {
     initCmpOnReady = true;
     createComponentOnReadyPrototype(win, namespace, win.HTMLElement.prototype);
