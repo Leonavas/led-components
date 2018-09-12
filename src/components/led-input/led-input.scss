@@ -1,0 +1,65 @@
+:host {
+  --led-input-font: Roboto;
+
+  font-family: Roboto;
+
+  @if variable-exists(var(--led-input-font)) {
+    font-family: var(--led-input-font) !important;
+  }
+
+  label {
+    cursor: text;
+    padding-left: 4px;
+    padding-right: 4px;
+    background: white;
+    color: #5f6368;
+    position: absolute;
+    margin-bottom: 0;
+    -webkit-transform: translate3d(12px, 20px, 0);
+    transform: translate3d(12px, 20px, 0);
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    -webkit-transition: -webkit-transform 150ms ease-in-out;
+    transition: -webkit-transform 150ms ease-in-out;
+    transition: transform 150ms ease-in-out;
+    transition: transform 150ms ease-in-out, -webkit-transform 150ms ease-in-out;
+  }
+
+  .selected {
+    color: #604C8D;
+    transform: translate3d(12px, 0, 0) scale(.8);
+    -webkit-transform: translate3d(12px, 0, 0) scale(.8);
+    font-weight: bold;
+  }
+
+  .outer {
+    padding-top: 5px;
+    display: "table";
+  }
+
+  .inner {
+    border: 1px solid #5f6368;
+    margin-top: 6px;
+    border-radius: 5px;
+    padding-top: 15px;
+
+    &.hasFocus {
+      border: 2px solid #604C8D;
+    }
+  }
+
+  input {
+    border: 0px;
+    width: 100%; box-sizing: border-box;
+    height: 34px;
+    font-size: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-top: -10px;
+    margin-bottom: 4px;
+  }
+
+  input:focus {
+    outline: 0;
+  }
+}
