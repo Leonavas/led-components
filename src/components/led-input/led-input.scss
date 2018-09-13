@@ -1,5 +1,7 @@
 :host {
   --led-input-font: Roboto;
+  --led-input-bg-color: #fff;
+
 
   font-family: Roboto;
 
@@ -11,7 +13,8 @@
     cursor: text;
     padding-left: 4px;
     padding-right: 4px;
-    background: white;
+    margin-bottom: -20px;
+    z-index: 99999;
     color: #5f6368;
     position: absolute;
     margin-bottom: 0;
@@ -23,43 +26,56 @@
     transition: -webkit-transform 150ms ease-in-out;
     transition: transform 150ms ease-in-out;
     transition: transform 150ms ease-in-out, -webkit-transform 150ms ease-in-out;
-  }
 
-  .selected {
-    color: #604C8D;
-    transform: translate3d(12px, 0, 0) scale(.8);
-    -webkit-transform: translate3d(12px, 0, 0) scale(.8);
-    font-weight: bold;
-  }
-
-  .outer {
-    padding-top: 5px;
-    display: "table";
-  }
-
-  .inner {
-    border: 1px solid #5f6368;
-    margin-top: 6px;
-    border-radius: 5px;
-    padding-top: 15px;
-
-    &.hasFocus {
-      border: 2px solid #604C8D;
+    div {
+      background-color: var(--led-input-bg-color);
+      margin-left: -4px;
+      z-index: -1;
+      width: calc(100% + 4px);
+      height: 100%;
+      position: absolute;
+      top: 7px;
     }
   }
+}
 
-  input {
-    border: 0px;
-    width: 100%; box-sizing: border-box;
-    height: 34px;
-    font-size: 16px;
-    padding-left: 14px;
-    padding-right: 14px;
-    margin-top: -10px;
-    margin-bottom: 4px;
-  }
+.selected {
+  color: #604C8D;
+  transform: translate3d(12px, 0, 0) scale(.8);
+  -webkit-transform: translate3d(12px, 0, 0) scale(.8);
+  font-weight: bold;
+}
 
-  input:focus {
-    outline: 0;
+.outer {
+  padding-top: 5px;
+  display: "table";
+}
+
+.inner {
+  background-color: var(--led-input-bg-color);
+  border: 1px solid #5f6368;
+  margin-top: 6px;
+  border-radius: 5px;
+  padding-top: 15px;
+
+  &.hasFocus {
+    border: 2px solid #604C8D;
   }
+}
+
+input {
+  background-color: var(--led-input-bg-color);
+  border: 0px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 34px;
+  font-size: 16px;
+  padding-left: 14px;
+  padding-right: 14px;
+  margin-top: -10px;
+  margin-bottom: 4px;
+}
+
+input:focus {
+  outline: 0;
 }

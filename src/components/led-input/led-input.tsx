@@ -20,21 +20,24 @@ export class LedInput {
   render() {
     return (
       <div class="outer">
-        <label 
+        <label
           class={(this.active ? 'selected' : '')}
-          onClick={ () => this.handleLabelClick()}>
+          onClick={() => this.handleLabelClick()}>
           {this.placeholder}
+          <div></div>
         </label>
+
+
         <div class={'inner ' + (this.active ? 'hasFocus' : '')}>
-        <input 
-          id="input"
-          ref={(el: HTMLInputElement) => this.textInput = el}
-          type="text"
-          onInput={(event) => this.handleOnInput(event)}
-          onFocus={() => this.handleOnFocus()}
-          onBlur={() => this.handleOnBlur()}
+          <input
+            id="input"
+            ref={(el: HTMLInputElement) => this.textInput = el}
+            type="text"
+            onInput={(event) => this.handleOnInput(event)}
+            onFocus={() => this.handleOnFocus()}
+            onBlur={() => this.handleOnBlur()}
           >
-        </input>
+          </input>
         </div>
       </div>
     );
