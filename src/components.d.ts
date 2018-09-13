@@ -14,11 +14,15 @@ export namespace Components {
   interface LedInput {
     'first': string;
     'last': string;
+    'mask': string;
+    'maskPlaceholder': string;
     'placeholder': string;
   }
   interface LedInputAttributes extends StencilHTMLAttributes {
     'first'?: string;
     'last'?: string;
+    'mask'?: string;
+    'maskPlaceholder'?: string;
     'placeholder'?: string;
   }
 }
