@@ -7,18 +7,18 @@ import { Component, Prop, State } from '@stencil/core';
 })
 export class LedInput {
 
-  @Prop() first: string;
-  @Prop() last: string;
-  @Prop() placeholder: string = '';
+  @Prop() first: string
+  @Prop() last: string
+  @Prop() placeholder: string = ''
 
-  @Prop() maskPlaceholder: string = '_';
-  @Prop() mask: string;
+  @Prop() maskPlaceholder: string = '_'
+  @Prop() mask: string
 
-  @State() active: boolean = false;
-  @State() value: any;
-  @State() isEmpty: boolean = true;
+  @State() active: boolean = false
+  @State() value: any
+  @State() isEmpty: boolean = true
 
-  textInput: HTMLInputElement;
+  textInput: HTMLInputElement
 
   render() {
     return (
@@ -37,6 +37,7 @@ export class LedInput {
             ref={(el: HTMLInputElement) => this.textInput = el}
             type="text"
             onInput={(event) => this.handleOnInput(event)}
+            onKeyPress={(event) => this.handleOnKeyDown(event)}
             onFocus={() => this.handleOnFocus()}
             onBlur={() => this.handleOnBlur()}
           >
@@ -47,22 +48,22 @@ export class LedInput {
   }
 
   componentDidLoad() {
-    if (typeof(this.mask) !== 'undefined') {
-      this.textInput.maxLength = this.mask.length + 1
-    }
-    
+    // if (typeof(this.mask) !== 'undefined') {
+    //   this.textInput.maxLength = this.mask.length + 1
+    // }
+
   }
 
   handleInputState(type?) {
-    if (typeof(type) === 'undefined') {
+    if (typeof (type) === 'undefined') {
       type = 'insertText'
     }
     const formattedMask = this.mask.replace(new RegExp('9', 'g'), this.maskPlaceholder)
-    if (typeof(this.mask) !== 'undefined' && this.active) {
+    if (typeof (this.mask) !== 'undefined' && this.active) {
       if (this.textInput.value == '') {
         setTimeout(() => {
           this.textInput.value = formattedMask
-          this.textInput.setSelectionRange(0,0)
+          this.textInput.setSelectionRange(0, 0)
         }, 10)
       } else {
 
@@ -81,17 +82,17 @@ export class LedInput {
           this.textInput.value = firstPiece + lastPiece
           this.textInput.setSelectionRange(cursorPosition + skipChars, cursorPosition + skipChars)
         } else {
-
+          
         }
 
-        if (this.isLast(cursorPosition)) {
-          this.textInput.maxLength = this.mask.length
-        } else {
-          this.textInput.maxLength = this.mask.length + 1
-        }
-        
+        // if (this.isLast(cursorPosition)) {
+        //   this.textInput.maxLength = this.mask.length
+        // } else {
+        //   this.textInput.maxLength = this.mask.length + 1
+        // }
+
       }
-    } else if (typeof(this.mask) !== 'undefined') {
+    } else if (typeof (this.mask) !== 'undefined') {
       setTimeout(() => {
         this.textInput.value = ''
       }, 10)
@@ -99,12 +100,15 @@ export class LedInput {
   }
 
   canInput(pos) {
-
     if (this.mask.replace(new RegExp('9', 'g'), this.maskPlaceholder).charAt(pos - 1) === this.maskPlaceholder) {
       return true;
     } else {
       return false;
     }
+  }
+
+  inputedLendgth() {
+    return (this.textInput.value.match(new RegExp('_', 'g')) || []).length - 1;
   }
 
   isLast(pos) {
@@ -120,7 +124,7 @@ export class LedInput {
     if (mask.charAt(pos) !== this.maskPlaceholder) {
       let skippedChars = 1;
 
-      for (let i = pos + 1; i < mask.length -1; i++) {
+      for (let i = pos + 1; i < mask.length - 1; i++) {
         if (mask.charAt(i) !== this.maskPlaceholder) {
           skippedChars += 1
         } else {
@@ -168,6 +172,12 @@ export class LedInput {
       this.isEmpty = false
     }
     this.handleInputState(event.inputType)
+  }
+
+  //TODO VALIDATE HERE THE KEY
+  handleOnKeyDown(event) {
+    console.log(event)
+    event.preventDefault();
   }
 
   handleOnFocus() {
