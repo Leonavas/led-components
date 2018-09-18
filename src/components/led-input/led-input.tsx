@@ -36,8 +36,8 @@ export class LedInput {
             id="input"
             ref={(el: HTMLInputElement) => this.textInput = el}
             type="text"
-            onInput={(event) => this.handleOnInput(event)}
-            onKeyPress={(event) => this.handleOnKeyDown(event)}
+            onKeyDown={(event) => this.handleOnKeyDown(event)}
+            onKeyPress={(event) => this.handleOnKeyPress(event)}
             onFocus={() => this.handleOnFocus()}
             onBlur={() => this.handleOnBlur()}
           >
@@ -48,62 +48,8 @@ export class LedInput {
   }
 
   componentDidLoad() {
-    // if (typeof(this.mask) !== 'undefined') {
-    //   this.textInput.maxLength = this.mask.length + 1
-    // }
-
-  }
-
-  handleInputState(type?) {
-    if (typeof (type) === 'undefined') {
-      type = 'insertText'
-    }
-    const formattedMask = this.mask.replace(new RegExp('9', 'g'), this.maskPlaceholder)
-    if (typeof (this.mask) !== 'undefined' && this.active) {
-      if (this.textInput.value == '') {
-        setTimeout(() => {
-          this.textInput.value = formattedMask
-          this.textInput.setSelectionRange(0, 0)
-        }, 10)
-      } else {
-
-        const cursorPosition = this.textInput.selectionStart
-        let skipChars = 0
-        if (type === 'insertText') {
-          skipChars = this.skipNext(cursorPosition)
-        } else {
-          skipChars = this.skipPrev(cursorPosition)
-        }
-        if (this.canInput(cursorPosition) || type !== 'insertText') {
-          const firstPiece = this.textInput.value.substring(0, this.textInput.selectionStart)
-          //TODO: Check if there are content after cursor and merge it with mask if there isnt
-          const lastPiece = formattedMask.substring(this.textInput.selectionStart, formattedMask.length)
-
-          this.textInput.value = firstPiece + lastPiece
-          this.textInput.setSelectionRange(cursorPosition + skipChars, cursorPosition + skipChars)
-        } else {
-          
-        }
-
-        // if (this.isLast(cursorPosition)) {
-        //   this.textInput.maxLength = this.mask.length
-        // } else {
-        //   this.textInput.maxLength = this.mask.length + 1
-        // }
-
-      }
-    } else if (typeof (this.mask) !== 'undefined') {
-      setTimeout(() => {
-        this.textInput.value = ''
-      }, 10)
-    }
-  }
-
-  canInput(pos) {
-    if (this.mask.replace(new RegExp('9', 'g'), this.maskPlaceholder).charAt(pos - 1) === this.maskPlaceholder) {
-      return true;
-    } else {
-      return false;
+    if (typeof (this.mask) !== 'undefined') {
+      this.textInput.maxLength = this.mask.length
     }
   }
 
@@ -111,16 +57,11 @@ export class LedInput {
     return (this.textInput.value.match(new RegExp('_', 'g')) || []).length - 1;
   }
 
-  isLast(pos) {
-    if (pos === this.mask.length) {
-      return true;
-    }
-    return false;
-  }
-
   skipNext(pos) {
     // if next position is a fixed character placeholder...
-    const mask = this.mask.replace(new RegExp('9', 'g'), this.maskPlaceholder)
+    const mask = this.mask
+      .replace(new RegExp('9', 'g'), this.maskPlaceholder)
+      .replace(new RegExp('A', 'g'), this.maskPlaceholder)
     if (mask.charAt(pos) !== this.maskPlaceholder) {
       let skippedChars = 1;
 
@@ -140,11 +81,13 @@ export class LedInput {
 
   skipPrev(pos) {
     // if next position is a fixed character placeholder...
-    const mask = this.mask.replace(new RegExp('9', 'g'), this.maskPlaceholder)
-    if (mask.charAt(pos) !== this.maskPlaceholder) {
+    const mask = this.mask
+      .replace(new RegExp('9', 'g'), this.maskPlaceholder)
+      .replace(new RegExp('A', 'g'), this.maskPlaceholder)
+    if (mask.charAt(pos - 1) !== this.maskPlaceholder) {
       let skippedChars = 0;
 
-      for (let i = pos; i >= 0; i--) {
+      for (let i = pos - 1; i >= 0; i--) {
         if (mask.charAt(i) !== this.maskPlaceholder) {
           skippedChars -= 1
         } else {
@@ -162,28 +105,98 @@ export class LedInput {
     this.textInput.focus();
   }
 
-  handleOnInput(event) {
-    //console.log(event.inputType)
-    //console.log('onInput')
-    this.value = event.target.value
-    if (this.value === '') {
-      this.isEmpty = true
-    } else {
-      this.isEmpty = false
+  handleOnKeyPress(event) {
+    const cursorPosition = this.textInput.selectionStart
+    if (event.key.length === 1) {
+      switch (this.mask.charAt(cursorPosition)) {
+        case 'A':
+          if (!event.key.match(/[a-zA-Z]/i)) {
+            event.preventDefault();
+            this.textInput.setSelectionRange(this.textInput.selectionStart, this.textInput.selectionStart)
+            return false;
+          }
+          break;
+        case '9':
+          if (!event.key.match(/[0-9]/i)) {
+            event.preventDefault();
+            this.textInput.setSelectionRange(this.textInput.selectionStart, this.textInput.selectionStart)
+            return false;
+          }
+          break;
+        default:
+
+      }
     }
-    this.handleInputState(event.inputType)
   }
 
-  //TODO VALIDATE HERE THE KEY
   handleOnKeyDown(event) {
-    console.log(event)
-    event.preventDefault();
+
+    const cursorPosition = this.textInput.selectionStart
+
+    if (
+      (this.textInput.selectionEnd === this.textInput.selectionStart) &&
+      (event.key.length === 1) ||
+      (event.key === 'Backspace')
+    ) {
+
+      let skipChars = 0
+      if (event.key === 'Backspace') {
+        if (this.textInput.selectionEnd !== this.textInput.selectionStart) {
+          skipChars = 1
+        } else {
+          skipChars = this.skipPrev(cursorPosition)
+        }
+
+        this.textInput.setSelectionRange(cursorPosition - 1 + skipChars, cursorPosition + skipChars)
+      } else {
+        skipChars = this.skipNext(cursorPosition)
+        this.textInput.setSelectionRange(cursorPosition + skipChars, cursorPosition + 1 + skipChars)
+      }
+    }
+
+    setTimeout(() => {
+      this.fixMask(this.textInput.selectionStart)
+    }, 1)
+
+  }
+
+  fixMask(currentPos) {
+    if (this.textInput.value.length !== this.mask.length) {
+      const formattedMask = this.mask
+        .replace(new RegExp('9', 'g'), this.maskPlaceholder)
+        .replace(new RegExp('A', 'g'), this.maskPlaceholder)
+      const firstPiece = this.textInput.value.substring(0, this.textInput.selectionStart)
+      //TODO: Check if there are content after cursor and merge it with mask if there isnt
+
+      const lastPiece = formattedMask.substring(this.textInput.selectionStart, formattedMask.length)
+
+      this.textInput.value = firstPiece + lastPiece
+
+      this.textInput.setSelectionRange(currentPos, currentPos)
+    }
   }
 
   handleOnFocus() {
-    //console.log('onFocus')
     this.active = true
-    this.handleInputState()
+    // this.handleInputState()
+
+    const formattedMask = this.mask
+      .replace(new RegExp('9', 'g'), this.maskPlaceholder)
+      .replace(new RegExp('A', 'g'), this.maskPlaceholder)
+    if (typeof (this.mask) !== 'undefined' && this.active) {
+      if (this.textInput.value == '') {
+        setTimeout(() => {
+          this.textInput.value = formattedMask
+          this.textInput.setSelectionRange(0, 0)
+        }, 10)
+      } else if (typeof (this.mask) !== 'undefined') {
+        setTimeout(() => {
+          this.textInput.value = ''
+          this.textInput.value = formattedMask
+          this.textInput.setSelectionRange(0, 0)
+        }, 10)
+      }
+    }
   }
 
   handleOnBlur() {
@@ -193,7 +206,8 @@ export class LedInput {
     } else {
       this.active = true
     }
-    this.handleInputState();
+    //this.handleInputState();
   }
+
 
 }
