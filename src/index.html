@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
@@ -7,13 +8,22 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <script src="/build/ledinput.js"></script>
 
+
 </head>
+
 <body>
 
-  <led-input 
-    placeholder="Pretty Placeholder"
-    mask="9A9-99 - 999">
+  <form>
+      <led-input placeholder="Masked Input" mask="999-99 - 999">
+        </led-input>
+    <input type="submit" value="enviar" />
+  </form>
+
+  
+
+  <led-input placeholder="Pretty Placeholder">
   </led-input>
 
 </body>
+
 </html>
