@@ -17,6 +17,7 @@ export namespace Components {
     'mask': string;
     'maskPlaceholder': string;
     'placeholder': string;
+    'required': boolean;
   }
   interface LedInputAttributes extends StencilHTMLAttributes {
     'first'?: string;
@@ -24,6 +25,7 @@ export namespace Components {
     'mask'?: string;
     'maskPlaceholder'?: string;
     'placeholder'?: string;
+    'required'?: boolean;
   }
 }
 

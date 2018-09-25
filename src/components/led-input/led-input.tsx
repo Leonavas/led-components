@@ -14,10 +14,17 @@ export class LedInput {
   @Prop() maskPlaceholder: string = '_'
   @Prop() mask: string
 
+  @Prop() required: boolean = false;
+
   @State() active: boolean = false
   @State() value: any
   @State() hasMask: boolean = false
-  //@State() isEmpty: boolean = true
+  @State() hasError: boolean = false;
+  @State() touched: boolean = false;
+  @State() pristine: boolean = true;
+  @State() dirty: boolean = false;
+  
+  @State() isEmpty: boolean = true
 
   textInput: HTMLInputElement
 
@@ -25,14 +32,14 @@ export class LedInput {
     return (
       <div class="outer">
         <label
-          class={(this.active ? 'selected' : '')}
+          class={(this.active ? 'selected' : '') + ' ' + (this.hasError ? 'hasError' : '')}
           onClick={() => this.handleLabelClick()}>
           {this.placeholder}
           <div></div>
         </label>
 
 
-        <div class={'inner ' + (this.active ? 'hasFocus' : '')}>
+        <div class={'inner ' + (this.active ? 'hasFocus' : '')  + ' ' + (this.hasError ? 'hasError' : '')}>
           <input
             id="input"
             ref={(el: HTMLInputElement) => this.textInput = el}
@@ -44,6 +51,13 @@ export class LedInput {
           >
           </input>
         </div>
+        {this.hasError
+          ? <div class="error-message">
+            <span>Required</span>
+          </div>
+          : <div class="space-holder"></div>
+        }
+
       </div>
     );
   }
@@ -147,6 +161,9 @@ export class LedInput {
   }
 
   handleOnKeyDown(event) {
+    if (!this.dirty) {
+      this.dirty = true;
+    }
     if (this.hasMask) {
       const cursorPosition = this.textInput.selectionStart
 
@@ -204,7 +221,7 @@ export class LedInput {
         .replace(new RegExp('9', 'g'), this.maskPlaceholder)
         .replace(new RegExp('A', 'g'), this.maskPlaceholder)
       if (this.active) {
-        if (this.isEmpty()) {
+        if (this.checkIsEmpty()) {
           setTimeout(() => {
             this.textInput.value = formattedMask
             this.textInput.setSelectionRange(0, 0)
@@ -221,27 +238,46 @@ export class LedInput {
 
   }
 
-  isEmpty() {
+  checkIsEmpty() {
     if (this.hasMask) {
       const formattedMask = this.mask
         .replace(new RegExp('9', 'g'), this.maskPlaceholder)
         .replace(new RegExp('A', 'g'), this.maskPlaceholder)
-      return this.textInput.value === null || this.textInput.value === '' || this.textInput.value === formattedMask;
+      this.isEmpty = this.textInput.value === null || this.textInput.value === '' || this.textInput.value === formattedMask
+      return this.isEmpty
     } else {
-      return this.textInput.value === null || this.textInput.value === ''
+      this.isEmpty = this.textInput.value === null || this.textInput.value === ''
+      return this.isEmpty
     }
 
   }
 
   handleOnBlur() {
-    //console.log('Blur')
-    if (this.isEmpty()) {
+    if (this.checkIsEmpty()) {
       this.active = false
     } else {
       this.active = true
     }
-    //this.handleInputState();
+
+    this.checkIsEmpty();
+
+    this.touched = true;
+
+    if (this.dirty) {
+      this.pristine = false;
+    }
+
+    this.triggerValidations()
   }
 
+  triggerValidations() {
+    if (typeof(this.required) !== 'undefined' && this.required && this.isEmpty) {
+      if (!this.pristine) {
+        this.hasError = true
+      }
+    } else {
+      this.hasError = false
+    }
+  }
 
 }
